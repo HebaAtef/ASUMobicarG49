@@ -1,7 +1,7 @@
 #define IN1  22     //the forward rotational direction pin of the right motors        
 #define IN2  23     //the backward rotational direction pin of the right motors          
 #define IN3  24     //the forward rotational direction pin of the left motors       
-#define IN4  25     /the backward rotational direction pin of the left motors      
+#define IN4  25     //the backward rotational direction pin of the left motors      
 #define EN1  2      //Right Motors PWM Pin to control the speed      
 #define EN2  3      //Left Motors PWM pin to control the speed
 #define speed 127   //Set the Speed to half (255/2)
