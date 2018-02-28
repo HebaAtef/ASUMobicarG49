@@ -48,6 +48,16 @@ int turn_right(int speeder)
     analogWrite(EN2,speeder);
  }
 
+ int turn_round(int speeder){
+    digitalWrite(IN1,HIGH);
+    digitalWrite(IN2,LOW);
+    digitalWrite(IN3,HIGH);
+    digitalWrite(IN4,LOW);
+    analogWrite(EN1,speeder);
+    analogWrite(EN2,speeder);
+  }
+
+
 void setup() {
   pinMode(IN1,OUTPUT);
   pinMode(IN2,OUTPUT);
