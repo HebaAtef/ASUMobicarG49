@@ -4,6 +4,7 @@
 #define IN4  25     //Right Motors Backward Direction Control Pin         
 #define EN1  2      //Left Motors PWM Pin to control the speed      
 #define EN2  3      //Right Motors PWM pin to control the speed
+#define speed 127   //Set the Speed to half (255/2)
 
 
 int forward(int speeder)    
