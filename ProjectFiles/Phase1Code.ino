@@ -68,6 +68,34 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  while(Serial.available()){
+            
+                 int data = Serial.read();     //Save The Reciver Value From Bluetooth in Variable
+           if(data == '1')        //1 in Android APP tends to the UP Arrow                 
+           {
+            forward(255);                           
+            delay(20);                               
+            forward(0);                                                                
+           }
+            else if (data == '2')   //2 in Android APP tends to the Down Arrow
+           { 
+           backward(255);
+           delay(20);
+           backward(0);
+           }
+            else if (data=='4')    //4 in Android APP tends to the Left Arrow
+           {
+            turn_left(255);
+            delay(20);
+            turn_left(0);
+          
+           }
+            else if(data=='3')     //3 in Android APP tends to the Right Arrow
+           {
+            turn_right(255);
+            delay(20);
+            turn_right(0);
+           }
+      }
 
 }
