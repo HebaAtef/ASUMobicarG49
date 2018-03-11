@@ -1,3 +1,6 @@
+#include <NewPing.h>
+#include <Servo.h>
+
 #define IN1  22     //the forward rotational direction pin of the right motors        
 #define IN2  23     //the backward rotational direction pin of the right motors          
 #define IN3  24     //the forward rotational direction pin of the left motors       
@@ -7,6 +10,18 @@
 #define speed 127   //Set the Speed to half (255/2)
 
 
+#define trig_pin A6           //ultrasonic transmitter pin
+#define echo_pin A7           //ultrasonic receiver pin
+#define maximum_distance 200  //define the maximum distance to start avoid obstcales
+#define servoPin 6            //servo motor pin for ultrasonic navigattion to get left and right distances
+
+
+/*__________________________obstcale avoiding______________________________________________*/
+boolean goesForward = false;     //boolean flag for car forward going state
+int distance = 100;
+NewPing sonar(trig_pin, echo_pin, maximum_distance);  //Function from library <NewPing> to get ultrasonic configuration
+Servo servo_motor;       //define servo motor
+/*_________________________________________________________________________________________*/
 
 int forward(int speeder)    
  {
@@ -65,37 +80,42 @@ void setup() {
   pinMode(IN4,OUTPUT);
   pinMode(EN1,OUTPUT);
   pinMode(EN2,OUTPUT);
+ 
+ servo_motor.attach(servoPin); 
+  servo_motor.write(90);
+  delay(2000);
+  distance = readPing();
+  delay(100);
+  distance = readPing();
+  delay(100);
+  distance = readPing();
+  delay(100);
+  distance = readPing();
+  delay(100);    
 }
 
 void loop() {
   while(Serial.available()){
             
                  int data = Serial.read();     //Save The Reciver Value From Bluetooth in Variable
-           if(data == '1')        //1 in Android APP tends to the UP Arrow                 
-           {
-            forward(255);                           
-            delay(20);                               
-            forward(0);                                                                
+           if(data == '1'){        //1 in Android APP tends to the UP Arrow                
+                forward(255);                           
+                delay(20);                               
+                forward(0);                                                                
            }
-            else if (data == '2')   //2 in Android APP tends to the Down Arrow
-           { 
-           backward(255);
-           delay(20);
-           backward(0);
+            else if (data == '2'){   //2 in Android APP tends to the Down Arrow 
+               backward(255);
+               delay(20);
+               backward(0);
            }
-            else if (data=='4')    //4 in Android APP tends to the Left Arrow
-           {
-            turn_left(255);
-            delay(20);
-            turn_left(0);
-          
-           }
-            else if(data=='3')     //3 in Android APP tends to the Right Arrow
-           {
-            turn_right(255);
-            delay(20);
-            turn_right(0);
+            else if (data=='4'){    //4 in Android APP tends to the Left Arrow
+               turn_left(255);
+               delay(20);
+               turn_left(0);
+            }else if(data=='3'){    //3 in Android APP tends to the Right Arrow
+               turn_right(255);
+               delay(20);
+               turn_right(0);
            }
       }
-
 }
