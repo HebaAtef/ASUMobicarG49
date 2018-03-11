@@ -218,6 +218,37 @@ void loop() {
                turn_right(255);
                delay(20);
                turn_right(0);
-           }
+           }else if (data == '9'){
+  int distanceRight = 0;
+  int distanceLeft = 0;
+  delay(50);
+   forward(110);
+  if (distance <= 40){
+    moveForward();
+    delay(300);
+    moveBackward();
+    delay(400);
+    moveStop();
+    delay(300);
+    
+    distanceRight = lookRight();
+    delay(300);
+    distanceLeft = lookLeft();
+    delay(300);
+
+    if (distance >= distanceLeft){
+      turnRight();
+      moveStop(); 
+      } 
+      else{ 
+        turnLeft();
+        moveStop();
+    }
+  }
+  else{
+    moveForward(); 
+  }
+    distance = readPing();
+  }
       }
 }
