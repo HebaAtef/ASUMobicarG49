@@ -72,6 +72,108 @@ int turn_right(int speeder)
     analogWrite(EN2,speeder);
   }
 
+int lookRight(){  
+  servo_motor.write(20);
+  delay(500);
+  int distance = readPing();
+  delay(100);
+  servo_motor.write(90);
+  return distance;
+}
+
+int lookLeft(){
+  servo_motor.write(170);
+  delay(500);
+  int distance = readPing();
+  delay(100);
+  servo_motor.write(90);
+  return distance;
+  delay(100);
+}
+
+int readPing(){
+  delay(70);
+  int cm = sonar.ping_cm();
+  return cm;
+}
+void moveStop(){
+  
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+  analogWrite(EN1, 0);
+  analogWrite(EN2, 0);
+}
+
+void moveForward(){
+
+  if(!goesForward){
+
+    goesForward=true;
+    
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  analogWrite(EN1, obsp);
+  analogWrite(EN2, obsp);
+  }
+}
+
+void moveBackward(){
+
+  goesForward=false;
+
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+  analogWrite(EN1, obsp);
+  analogWrite(EN2, obsp);
+  
+}
+
+void turnRight(){
+
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  analogWrite(EN1, obsp);
+  analogWrite(EN2, obsp);
+  
+  delay(500);
+  
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  analogWrite(EN1, obsp);
+  analogWrite(EN2, obsp);
+ 
+  
+  
+}
+
+void turnLeft(){
+
+ digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+  analogWrite(EN1, obsp);
+  analogWrite(EN2, obsp);
+
+  delay(500);
+  
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  analogWrite(EN1, obsp);
+  analogWrite(EN2, obsp);
+}
 
 void setup() {
   pinMode(IN1,OUTPUT);
