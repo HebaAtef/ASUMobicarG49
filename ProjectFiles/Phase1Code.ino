@@ -1,27 +1,28 @@
+
 #include <NewPing.h>
 #include <Servo.h>
+#define IN1  22             
+#define IN2  23              
+#define IN3  24             
+#define IN4  25             
+#define EN1  2             
+#define EN2  3 
 
-#define IN1  22     //the forward rotational direction pin of the right motors        
-#define IN2  23     //the backward rotational direction pin of the right motors          
-#define IN3  24     //the forward rotational direction pin of the left motors       
-#define IN4  25     //the backward rotational direction pin of the left motors      
-#define EN1  2      //Right Motors PWM Pin to control the speed      
-#define EN2  3      //Left Motors PWM pin to control the speed
-#define speed 127   //Set the Speed to half (255/2)
+#define obsp 200
+#define obspFB 100
 
+#define trig_pin A6
+#define echo_pin A7
+#define maximum_distance 200
+#define servoPin 6
 
-#define trig_pin A6           //ultrasonic transmitter pin
-#define echo_pin A7           //ultrasonic receiver pin
-#define maximum_distance 200  //define the maximum distance to start avoid obstcales
-#define servoPin 6            //servo motor pin for ultrasonic navigattion to get left and right distances
-
-
-/*__________________________obstcale avoiding______________________________________________*/
-boolean goesForward = false;     //boolean flag for car forward going state
+boolean goesForward = false;
 int distance = 100;
-NewPing sonar(trig_pin, echo_pin, maximum_distance);  //Function from library <NewPing> to get ultrasonic configuration
-Servo servo_motor;       //define servo motor
-/*_________________________________________________________________________________________*/
+
+NewPing sonar(trig_pin, echo_pin, maximum_distance); 
+Servo servo_motor; 
+
+
 
 int forward(int speeder)    
  {
@@ -41,9 +42,10 @@ int forward(int speeder)
     digitalWrite(IN4,HIGH);
     analogWrite(EN1,speeder);
     analogWrite(EN2,speeder);
+    
  }
 
-int turn_right(int speeder)  
+ int turn_right(int speeder)  
  {
     digitalWrite(IN1,LOW);
     digitalWrite(IN2,LOW);
@@ -63,16 +65,7 @@ int turn_right(int speeder)
     analogWrite(EN2,speeder);
  }
 
- int turn_round(int speeder){
-    digitalWrite(IN1,HIGH);
-    digitalWrite(IN2,LOW);
-    digitalWrite(IN3,HIGH);
-    digitalWrite(IN4,LOW);
-    analogWrite(EN1,speeder);
-    analogWrite(EN2,speeder);
-  }
-
-int lookRight(){  
+ int lookRight(){  
   servo_motor.write(20);
   delay(500);
   int distance = readPing();
@@ -116,8 +109,8 @@ void moveForward(){
   digitalWrite(IN2, LOW);
   digitalWrite(IN3, HIGH);
   digitalWrite(IN4, LOW);
-  analogWrite(EN1, obsp);
-  analogWrite(EN2, obsp);
+  analogWrite(EN1, obspFB);
+  analogWrite(EN2, obspFB);
   }
 }
 
@@ -129,90 +122,8 @@ void moveBackward(){
   digitalWrite(IN2, HIGH);
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, HIGH);
-  analogWrite(EN1, obsp);
-  analogWrite(EN2, obsp);
-  
-}
-
-void turnRight(){
- digitalWrite(IN1, LOW);
-  digitalWrite(IN2, HIGH);
-  digitalWrite(IN3, HIGH);
-  digitalWrite(IN4, LOW);
-  analogWrite(EN1, obsp);
-  analogWrite(EN2, obsp);
-  
-  delay(500);
-  
-  digitalWrite(IN1, HIGH);
-  digitalWrite(IN2, LOW);
-  digitalWrite(IN3, HIGH);
-  digitalWrite(IN4, LOW);
-  analogWrite(EN1, obsp);
-  analogWrite(EN2, obsp);
- 
-  
-  
-}
-int lookRight(){  
-  servo_motor.write(20);
-  delay(500);
-  int distance = readPing();
-  delay(100);
-  servo_motor.write(90);
-  return distance;
-}
-
-int lookLeft(){
-  servo_motor.write(170);
-  delay(500);
-  int distance = readPing();
-  delay(100);
-  servo_motor.write(90);
-  return distance;
-  delay(100);
-}
-
-int readPing(){
-  delay(70);
-  int cm = sonar.ping_cm();
-  return cm;
-}
-void moveStop(){
-  
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, LOW);
-  digitalWrite(IN3, LOW);
- digitalWrite(IN4, LOW);
- analogWrite(EN1, 0);
-  analogWrite(EN2, 0);
-}
-
-void moveForward(){
-
-  if(!goesForward){
-
-    goesForward=true;
-    
-  digitalWrite(IN1, HIGH);
-  digitalWrite(IN2, LOW);
-  digitalWrite(IN3, HIGH);
-  digitalWrite(IN4, LOW);
-  analogWrite(EN1, obsp);
-  analogWrite(EN2, obsp);
-  }
-}
-
-void moveBackward(){
-
-  goesForward=false;
-
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, HIGH);
-  digitalWrite(IN3, LOW);
-  digitalWrite(IN4, HIGH);
- analogWrite(EN1, obsp);
-  analogWrite(EN2, obsp);
+  analogWrite(EN1, obspFB);
+  analogWrite(EN2, obspFB);
   
 }
 
@@ -225,7 +136,7 @@ void turnRight(){
   analogWrite(EN1, obsp);
   analogWrite(EN2, obsp);
   
-  delay(500);
+  delay(300);
   
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW);
@@ -247,7 +158,7 @@ void turnLeft(){
   analogWrite(EN1, obsp);
   analogWrite(EN2, obsp);
 
-  delay(500);
+  delay(300);
   
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW);
@@ -257,25 +168,7 @@ void turnLeft(){
   analogWrite(EN2, obsp);
 }
 
-void turnLeft(){
-
- digitalWrite(IN1, HIGH);
-  digitalWrite(IN2, LOW);
-  digitalWrite(IN3, LOW);
-  digitalWrite(IN4, HIGH);
-  analogWrite(EN1, obsp);
-  analogWrite(EN2, obsp);
-
-  delay(500);
-  
-  digitalWrite(IN1, HIGH);
-  digitalWrite(IN2, LOW);
-  digitalWrite(IN3, HIGH);
-  digitalWrite(IN4, LOW);
-  analogWrite(EN1, obsp);
-  analogWrite(EN2, obsp);
-}
-
+/*_____________________________Void Setup Function___________________________________________________________*/
 void setup() {
   pinMode(IN1,OUTPUT);
   pinMode(IN2,OUTPUT);
@@ -283,8 +176,10 @@ void setup() {
   pinMode(IN4,OUTPUT);
   pinMode(EN1,OUTPUT);
   pinMode(EN2,OUTPUT);
- 
- servo_motor.attach(servoPin); 
+  
+  Serial.begin(9600);
+  
+  servo_motor.attach(servoPin); 
   servo_motor.write(90);
   delay(2000);
   distance = readPing();
@@ -296,64 +191,47 @@ void setup() {
   distance = readPing();
   delay(100);    
 }
+/*__________________________Void Loop Function______________________________________________________________*/
+void loop() 
+{
+      while (Serial.available()){
+       int data = Serial.read();     
+ if(data == '1')                     
+ {
+  forward(255);                           
+  delay(20);                               
+  forward(0);                                                                
+ }
+  else if (data == '2') 
+ { 
+ 
+  backward(255);
+  delay(20);
+  backward(0);
+ 
+  
+ }
+  else if (data=='4') 
+ {
+  turn_left(255);
+  delay(20);
+  turn_left(0);
 
-void loop() {
-  while(Serial.available()){
-            
-                 int data = Serial.read();     //Save The Reciver Value From Bluetooth in Variable
-           if(data == '1'){        //1 in Android APP tends to the UP Arrow                
-                forward(255);                           
-                delay(20);                               
-                forward(0);                                                                
-           }
-            else if (data == '2'){   //2 in Android APP tends to the Down Arrow 
-               backward(255);
-               delay(20);
-               backward(0);
-           }
-            else if (data=='4'){    //4 in Android APP tends to the Left Arrow
-               turn_left(255);
-               delay(20);
-               turn_left(0);
-            }else if(data=='3'){    //3 in Android APP tends to the Right Arrow
-               turn_right(255);
-               delay(20);
-               turn_right(0);
-           }
-    while(Serial.available()){
-            
-                 int data = Serial.read();     //Save The Reciver Value From Bluetooth in Variable
-           if(data == '1')        //1 in Android APP tends to the UP Arrow                 
-           {
-            forward(255);                           
-            delay(20);                               
-            forward(0);                                                                
-           }
-            else if (data == '2')   //2 in Android APP tends to the Down Arrow
-           { 
-           backward(255);
-           delay(20);
-           backward(0);
-           }
-            else if (data=='4')    //4 in Android APP tends to the Left Arrow
-           {
-            turn_left(255);
-            delay(20);
-            turn_left(0);
-          
-           }
-            else if(data=='3')     //3 in Android APP tends to the Right Arrow
-           {
-            turn_right(255);
-            delay(20);
-            turn_right(0);
-           }
-      }
-   else if (data == '9'){
-  int distanceRight = 0;
+ }
+  else if(data=='3') 
+ {
+  turn_right(255);
+  delay(20);
+  turn_right(0);
+ }
+
+  
+  else if (data == '9'){
+    
+   int distanceRight = 0;
   int distanceLeft = 0;
   delay(50);
-   forward(110);
+   forward(80);
   if (distance <= 40){
     moveForward();
     delay(300);
@@ -363,9 +241,9 @@ void loop() {
     delay(300);
     
     distanceRight = lookRight();
-    delay(300);
+    delay(600);
     distanceLeft = lookLeft();
-    delay(300);
+    delay(600);
 
     if (distance >= distanceLeft){
       turnRight();
@@ -381,5 +259,7 @@ void loop() {
   }
     distance = readPing();
   }
-      }
+  
+  
+}
 }
