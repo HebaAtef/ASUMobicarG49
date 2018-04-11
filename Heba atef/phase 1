@@ -8,6 +8,9 @@
 #define EN1  2             
 #define EN2  3 
 
+#define LS A4     // left line  sensor
+#define RS A5     // right line sensor
+
 #define obsp 200
 #define obspFB 100
 
@@ -260,8 +263,28 @@ void loop()
     distance = readPing();
   }
   
+       else if (data == '8'){
+    if((analogRead(LS) > IRthreshold)&&(analogRead(RS) >IRthreshold) )     
+  {
+      forward(50);
+  }
+  
+   if( (analogRead(LS) < IRthreshold)&&(analogRead(RS) >IRthreshold))     
+  {
+     turn_left(140);
+  }
+  
+   if((analogRead(LS) > IRthreshold)&&(analogRead(RS) <IRthreshold))     
+  {
+      turn_right(140);
+  }
+  
+  if((analogRead(LS) < IRthreshold)&&(analogRead(RS) <IRthreshold))     // stop
+  {
+     forward(0);
+      
+  }
+       
   
 }
 }
-
-   
