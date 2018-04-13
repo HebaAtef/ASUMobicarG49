@@ -1,4 +1,3 @@
-
 #include <NewPing.h>
 #include <Servo.h>
 #define IN1  22             
@@ -21,6 +20,12 @@
 
 boolean goesForward = false;
 int distance = 100;
+
+/*___________________________Line Follower Variable _____________________________________________________________*/
+int leftMotorSpeed = 80;   // start of Line Follower
+int rightMotorSpeed = 80;
+int IRthreshold = 300;    // end of Line Follower 
+
 
 NewPing sonar(trig_pin, echo_pin, maximum_distance); 
 Servo servo_motor; 
@@ -263,28 +268,24 @@ void loop()
     distance = readPing();
   }
   
-       else if (data == '8'){
-    if((analogRead(LS) > IRthreshold)&&(analogRead(RS) >IRthreshold) )     
-  {
-      forward(50);
-  }
-  
-   if( (analogRead(LS) < IRthreshold)&&(analogRead(RS) >IRthreshold))     
-  {
-     turn_left(140);
-  }
-  
-   if((analogRead(LS) > IRthreshold)&&(analogRead(RS) <IRthreshold))     
-  {
-      turn_right(140);
-  }
-  
-  if((analogRead(LS) < IRthreshold)&&(analogRead(RS) <IRthreshold))     // stop
-  {
-     forward(0);
+   else if (data == '8'){
+        if((analogRead(LS) > IRthreshold)&&(analogRead(RS) >IRthreshold) ){
+          forward(50);
+        }
       
-  }
-       
-  
-}
+       if( (analogRead(LS) < IRthreshold)&&(analogRead(RS) >IRthreshold)){
+         turn_left(140);
+       }
+      
+       if((analogRead(LS) > IRthreshold)&&(analogRead(RS) <IRthreshold)){
+          turn_right(140);
+       }
+      
+      if((analogRead(LS) < IRthreshold)&&(analogRead(RS) <IRthreshold)){
+         forward(0);
+      }
+   
+
+   }
+      }
 }
