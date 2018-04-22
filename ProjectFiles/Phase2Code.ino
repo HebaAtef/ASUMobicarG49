@@ -102,9 +102,9 @@ int forward(int speeder){
 
  void forward_right () {
      digitalWrite(IN1, HIGH);
-     digitalWrite(IN2, LOW);  // setting the motors to go forward right 
+     digitalWrite(IN2, LOW);   
      digitalWrite(IN3, HIGH);
-     digitalWrite(IN4, LOW);   // setting the motors to go forward right
+     digitalWrite(IN4, LOW);   
      analogWrite(EN1, 80);
      analogWrite(EN2, 200);
  }
