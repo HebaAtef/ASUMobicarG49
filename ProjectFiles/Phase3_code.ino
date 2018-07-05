@@ -10,16 +10,26 @@
 //Gyroscope pins
 
 //Gyroscope variables.
-const int MPU_addr = 0x68;
-int16_t Gz ;
+const int MPU_addr = 0x68;  //gyroscope address
+int16_t Gz ; //angular velocity
 
 //Accurate Distance 
-#define wheelSensor 2
-#define stepcount 28
+#define wheelSensor 2 //sensor pin 
+#define stepcount 28  //no of slots in the wheel
 const float wheel_Diameter = 64.5;
 
 
-void angle(float ra);
+//functions interface 
+void forward(int speeder);    // order motors to move forward given the PWM signal value
+void backward(int speeder);   // order motors to move backward given the PWM signal value
+void turn_left(int speeder);  // order motors to turn right given the PWM signal value
+void turn_right(int speeder); // order motors to turn left given the PWM signal value
+int CMtoSteps(float cm);      // translate the given distance to motor wheel slot number
+void forward_accurate_movement(int pulses); // accurate forward function given the no of wheel slots to move
+void backward_accurate_movement(int pulses); // accurate backward function given the no of wheel slots to move
+void angle(float ra);         // accurate angel of rotation function given only the angel value (support +ve & -ve values)
+
+
 
 void setup() {
   Serial.begin(9600);
@@ -27,23 +37,23 @@ void setup() {
 
 
 void loop(){
-     String str;
+     String str;  //intput string command form mobile app terminal
      while(Serial.available()){
-      str = Serial.readString();
-      Serial.println(str);
-      char dir = str[0];
-      String dis = str.substring(1,str.length());
-      float distance = dis.toFloat();
-      Serial.println(dir);
-      Serial.println(dis);
-      Serial.println(distance);
+      str = Serial.readString();  // read the command from mobile app
+      Serial.println(str);        // print the input string on serial monitor 
+      char mode = str[0];         // git the first char that select which accurate move option a: angel, f: forward, b:backward
+      String required_str = str.substring(1,str.length());  // get the required value from string 
+      float required_value = dis.toFloat();                 // convert the required value to float value
+      Serial.println(mode);                                 // print mode on serial monitor
+      Serial.println(required_str);                         // print required value string on serial monitor
+      Serial.println(required_str);                         // print required value float on serial monitor
 
-      if(dir == 'f'){
-         forward_accurate_movement(CMtoSteps(distance));
-        }else if( dir == 'b'){
-          backward_accurate_movement(CMtoSteps(distance));
-        }else if(dir == 'a'){
-          angle(distance);
+      if(mode == 'f'){                                             // if the mode is forward then move forward and
+         forward_accurate_movement(CMtoSteps(required_value));     // translate tha distance value to wheel slots value
+        }else if( mode == 'b'){                                    // if the mode is backward then move backward and 
+          backward_accurate_movement(CMtoSteps(required_value));   // translate tha distance value to wheel slots value
+        }else if(mode == 'a'){                                     // if the mode is angel then with angel given from 
+          angle(required_value);                                   // required value
         }
 
      } 
