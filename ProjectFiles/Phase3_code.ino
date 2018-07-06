@@ -6,8 +6,10 @@
 #define IN4  25             
 #define EN1  4             
 #define EN2  5
- 
-//Gyroscope pins
+
+// demo shapes lengthes 
+#define infinity_diagonale 50
+#define rectangle_length 50
 
 //Gyroscope variables.
 const int MPU_addr = 0x68;  //gyroscope address
@@ -28,7 +30,7 @@ int CMtoSteps(float cm);      // translate the given distance to motor wheel slo
 void forward_accurate_movement(int pulses); // accurate forward function given the no of wheel slots to move
 void backward_accurate_movement(int pulses); // accurate backward function given the no of wheel slots to move
 void angle(float ra);         // accurate angel of rotation function given only the angel value (support +ve & -ve values)
-
+void forward_accurate_movement_clock_wise(int pulses);
 
 
 void setup() {
@@ -37,13 +39,13 @@ void setup() {
 
 
 void loop(){
-     String str;  //intput string command form mobile app terminal
+     String in_str;  //intput string command form mobile app terminal
      while(Serial.available()){
-      str = Serial.readString();  // read the command from mobile app
-      Serial.println(str);        // print the input string on serial monitor 
-      char mode = str[0];         // git the first char that select which accurate move option a: angel, f: forward, b:backward
-      String required_str = str.substring(1,str.length());  // get the required value from string 
-      float required_value = dis.toFloat();                 // convert the required value to float value
+      in_str = Serial.readString();  // read the command from mobile app
+      Serial.println(in_str);        // print the input string on serial monitor 
+      char mode = in_str[0];         // git the first char that select which accurate move option a: angel, f: forward, b:backward
+      String required_str = in_str.substring(1,in_str.length());  // get the required value from string 
+      float required_value = required_str.toFloat();                 // convert the required value to float value
       Serial.println(mode);                                 // print mode on serial monitor
       Serial.println(required_str);                         // print required value string on serial monitor
       Serial.println(required_str);                         // print required value float on serial monitor
@@ -54,11 +56,48 @@ void loop(){
           backward_accurate_movement(CMtoSteps(required_value));   // translate tha distance value to wheel slots value
         }else if(mode == 'a'){                                     // if the mode is angel then with angel given from 
           angle(required_value);                                   // required value
+        }else if( in_str == "demo"){
+          demo_shapes();
         }
 
      } 
 }
 
+void demo_shapes(void){
+      // infinty start
+      angle (30) ;
+      for (int i = 0 ; i < 30 ; i++) {
+        forward_accurate_movement_clock_wise(2);
+        forward(0);
+        angle(-3) ;
+      }
+      forward_accurate_movement(CMtoSteps(infinity_diagonale));
+      for (int i = 0 ; i < 30; i++) {
+        forward_accurate_movement_anti_clock_wise(2);
+        forward(0);
+        angle(3) ;
+      }
+      forward_accurate_movement_anti_clock_wise_circular(CMtoSteps(infinity_diagonale), 210, 225);
+      angle (-30) ;
+      // ifinity done 
+      // square start
+        delay(1000) ;
+      for (int i = 0 ; i < 4 ; i++) {
+        forward_accurate_movement_anti_clock_wise_circular(CMtoSteps(rectangle_length), 210, 225);
+        forward(0);
+        angle(80) ; //90 degree
+       }
+      // square done
+      delay(1000) ;
+      // circle start
+      for (int i = 0 ; i < 55 ; i++) {
+        forward_accurate_movement_anti_clock_wise_circular(4, 210, 225);
+        forward(0);
+        angle(3) ;
+      }
+      forward(0);
+     // circuile done  
+}
 
 
 void angle (float ra){
@@ -156,10 +195,51 @@ void forward_accurate_movement(int pulses){
         Serial.println(slots_counts);
         } 
       } 
-  forward(0);
-  
+  forward(0); 
 }
 
+
+void forward_accurate_movement_clock_wise(int pulses){
+  slots_counts = 0;
+  while(slots_counts < pulses ){
+      forward_spec(190,140);
+      stateNew = digitalRead(wheelSensor);
+      if (stateNew != stateOld){
+        stateOld = stateNew;
+        slots_counts ++;
+        Serial.println(slots_counts);
+        } 
+      } 
+  forward(0); 
+}
+
+void forward_accurate_movement_anti_clock_wise(int pulses){
+  slots_counts = 0;
+  while(slots_counts < pulses ){
+      forward_spec(140,190);
+      stateNew = digitalRead(wheelSensor);
+      if (stateNew != stateOld){
+        stateOld = stateNew;
+        slots_counts ++;
+        Serial.println(slots_counts);
+        } 
+      } 
+  forward(0); 
+}
+
+void forward_accurate_movement_anti_clock_wise_circular(int pulses, int right_speed, int left_speed){
+  slots_counts = 0;
+  while(slots_counts < pulses ){
+      forward_spec(right_speed,left_speed);
+      stateNew = digitalRead(wheelSensor);
+      if (stateNew != stateOld){
+        stateOld = stateNew;
+        slots_counts ++;
+        Serial.println(slots_counts);
+        } 
+      } 
+  forward(0); 
+}
 void backward_accurate_movement(int pulses){
   slots_counts = 0;
   while(slots_counts < pulses ){
@@ -173,42 +253,60 @@ void backward_accurate_movement(int pulses){
       } 
   forward(0);
 }
-int forward(int speeder){
-    digitalWrite(IN1,HIGH);
-    digitalWrite(IN2,LOW);
-    digitalWrite(IN3,HIGH);
-    digitalWrite(IN4,LOW);
+void forward(int speeder){
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
     analogWrite(EN1,speeder);
     analogWrite(EN2,speeder);  
  }
 
- int backward(int speeder){
-    digitalWrite(IN1,LOW);
-    digitalWrite(IN2,HIGH);
-    digitalWrite(IN3,LOW);
-    digitalWrite(IN4,HIGH);
+ void backward(int speeder){
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, HIGH);
     analogWrite(EN1,speeder);
     analogWrite(EN2,speeder);
  }
 
 
- int turn_right(int speeder){
-    digitalWrite(IN1,LOW);
-    digitalWrite(IN2,HIGH);
-    digitalWrite(IN3,HIGH);
-    digitalWrite(IN4,LOW);
+ void turn_right(int speeder){
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
     analogWrite(EN1,speeder);
     analogWrite(EN2,speeder);
  }
  
- int turn_left(int speeder){
-    digitalWrite(IN1,HIGH);
-    digitalWrite(IN2,LOW);
-    digitalWrite(IN3,LOW);
-    digitalWrite(IN4,HIGH);
+ void turn_left(int speeder){
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, HIGH);
     analogWrite(EN1,speeder);
     analogWrite(EN2,speeder);
  }
+
+void forward_spec(int right_speed , int left_speed){
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
+    analogWrite(EN1, right_speed);
+    analogWrite(EN2, left_speed);
+}
+
+void backward_spec(int right_speed , int left_speed){
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, HIGH);
+    analogWrite(EN1, right_speed);
+    analogWrite(EN2, left_speed);
+}
 
 
 
